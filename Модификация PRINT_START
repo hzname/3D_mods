@@ -1,0 +1,70 @@
+##---------------------------
+## printer: QIDI Q1 PRO
+## firmware: V4.4.20
+##Модифицированный макрос PRINT_START для возможности исключения из процесса подготовки:
+## - очистка сопла: параметр CLEAN (0|1)
+## - снятие карты стола: параметр MASHING (0|1)
+##Пример стартового кода в слайсере (OrcaSlicer) С очисткой сопла и снятием карты стола: 
+##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=1 MASHING=1
+##Пример стартового кода в слайсере (OrcaSlicer) БЕЗ очистки сопла и БЕЗ снятия карты стола: 
+##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=0 MASHING=0
+##Пожелания и предложения: TLG@hzname
+##---------------------------
+## Modified PRINT_START macro for the possibility of exclusion from the preparation process:
+## - nozzle cleaning: parameter CLEAN(0/1)
+## - removing the bed mashing: parameter MASHING(0/1)
+##Example of the start code in the slicer (OrcaSlicer) WITH cleaning the nozzle and WITH bad mashing: 
+##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=1 MASHING=1
+##An example of the start code in the slicer (OrcaSlicer) WITHOUT cleaning the nozzle and WITHOUT bad mashing: 
+##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=0 MASHING=0
+##Suggestions: TLG@hzname
+##---------------------------
+[gcode_macro PRINT_START]
+gcode:
+    AUTOTUNE_SHAPERS
+
+    {% set bedtemp = params.BED|int %}
+    {% set hotendtemp = params.HOTEND|int %}
+    {% set chambertemp = params.CHAMBER|default(0)|int %}
+	##---------------------------
+	## параметры для модификации процесса подготовки
+	{% set cleantmp = params.CLEAN|default(1)int %}
+	{% set mashingtmp = params.MASHING|default(1)int %}
+	##---------------------------
+    set_zoffset
+    {% if chambertemp == 0 %}
+        M106 P3 S255
+    {% endif %}
+    M104 S0
+    M140 S{bedtemp}    
+    M141 S{chambertemp}
+    G28 
+	##---------------------------
+	##модификатор очистки сопла/nozzle cleaning modifier
+	{% if cleantmp == 1%}
+		CLEAR_NOZZLE HOTEND={hotendtemp} 	#оригинальная строчка/original line
+	{% endif %}
+	##---------------------------
+
+    M190 S{bedtemp}   
+#    Z_TILT_ADJUST
+    M106 S255 
+	#---------------------------
+	##модификатор снятия карты стола/bad mash modifier
+	{% if mashingtmp == 1%}
+		G29									#оригинальная строчка/original line
+	{% else %}
+		G28
+	{% endif %}
+	##---------------------------	
+	M106 S0 
+    G0 Z50 F600
+    G0 X0 Y0  F6000
+    
+    M191 S{chambertemp}
+    M109 S{hotendtemp}
+    M204 S10000
+	
+
+    ENABLE_ALL_SENSOR
+    save_last_file
