@@ -9,6 +9,8 @@
 ##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=1 MASHING=1
 ##Пример стартового кода в слайсере (OrcaSlicer) БЕЗ очистки сопла и БЕЗ снятия карты стола: 
 ##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=0 MASHING=0
+##Внимание! Выключение снятия карты стола чревато повреждением элементов принтера. Делайте это на свой страх и риск!
+##
 ##Пожелания и предложения: TLG@hzname
 ##---------------------------
 ## Modified PRINT_START macro for the possibility of exclusion from the preparation process:
@@ -18,6 +20,8 @@
 ##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=1 MASHING=1
 ##An example of the start code in the slicer (OrcaSlicer) WITHOUT cleaning the nozzle and WITHOUT bad mashing: 
 ##PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperature] CLEAN=0 MASHING=0
+##Attention! Turning off the bad mashing is fraught with damage to the printer elements. Do it at your own risk!
+##
 ##Suggestions: TLG@hzname
 ##---------------------------
 [gcode_macro PRINT_START]
